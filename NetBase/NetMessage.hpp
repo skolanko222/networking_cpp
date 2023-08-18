@@ -26,33 +26,42 @@ namespace net
 			return o << "ID: " << m.header.id << " Size:" << m.header.size;
 		}
 		template<typename PODdata>
-		friend message<T>& operator << (message<T>& m, const PODdata& d)
+		message<T>& operator << (const PODdata& d)
 		{
 			static_assert(std::is_pod<PODdata>::value, "Data is not POD");
 			
-			m.data.resize(m.data.size() + sizeof(d));
+			data.resize(data.size() + sizeof(d));
 
-			std::memcpy(m.data.data() + m.data.size() - sizeof(d), &d, sizeof(d));
+			std::memcpy(data.data() + data.size() - sizeof(d), &d, sizeof(d));
 
-			m.header.size = m.size();
+			header.size = size();
 
-			return m;
+			return *this;
 		}
 
 		template<typename PODdata>
-		friend message<T>& operator >> (message<T>& m, PODdata& d)
+		message<T>& operator >> (PODdata& d)
 		{
 			static_assert(std::is_pod<PODdata>::value, "Data is not POD");
 
-			std::memcpy(&d, m.data.data() + m.data.size() - sizeof(d), sizeof(d));
+			std::memcpy(&d, data.data() + data.size() - sizeof(d), sizeof(d));
 
-			m.data.resize(m.data.size() - sizeof(d));
+			data.resize(data.size() - sizeof(d));
 
-			m.header.size = m.size();
+			header.size = size();
 						 
-			return m;
+			return *this;
 
 		}
+	};
+	template <typename T>
+	class connection;
+	// message from remote to be send
+	template <typename T>
+	class remote_message
+	{
+		std::shared_ptr<connection<T>> src = nullptr;
+		message<T> m;
 	};
 
 

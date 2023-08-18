@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="net.hpp" />
     <ClInclude Include="NetBase.hpp" />
+    <ClInclude Include="NetClient.hpp" />
+    <ClInclude Include="NetConnection.hpp" />
     <ClInclude Include="NetMessage.hpp" />
     <ClInclude Include="NetQueue.hpp" />
   </ItemGroup>

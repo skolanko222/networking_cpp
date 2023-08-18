@@ -9,13 +9,28 @@ namespace net
 	public:
 		queue() = default;
 		queue(const queue<T>& a) = delete;
+		~queue() { clear(); }
 
+		// access first element  
 		const T& front()
 		{
 			std::lock_guard<std::mutex> lock{mux};
 			return deq.front();
 		}
-		const T& back()
+		T pop_back()
+		{
+			std::lock_guard<std::mutex> lock{mux};
+			T temp = std::move(deq.back());
+			deq.pop_back();
+			return temp;
+		}
+		T pop_front()
+		{
+			std::lock_guard<std::mutex> lock{ mux };
+			T temp = std::move(deq.front());
+			deq.pop_front();
+			return temp;
+		}const T& back()
 		{
 			std::lock_guard<std::mutex> lock{mux};
 			return deq.back();
@@ -46,6 +61,11 @@ namespace net
 		{
 			std::lock_guard<std::mutex> lock{mux};
 			return deq.end();
+		}
+		void clear()
+		{
+			std::lock_guard<std::mutex> lock{ mux };
+			deq.clear();
 		}
 		friend std::ostream& operator<<(std::ostream& o, const queue<T>& q)
 		{
